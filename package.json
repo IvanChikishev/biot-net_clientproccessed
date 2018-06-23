@@ -1,6 +1,6 @@
 {
-  "name" : "biot-wsclient"
-  "main" : "./cliget.js"
+  "name" : "biot-wsclient",
+  "main" : "./cliget.js",
   "dependencies": {
     "ws": "^5.2.0"
   }
