@@ -1,35 +1,30 @@
-const EventEmitter = require('events');
+const events = require('events');
 
-/**
- * @description 
- */
-class _cliget  {
-    constructor(ws) {
-        this.ws = ws;
-        this.waiterID = -1;
-        this.events = new EventEmitter();
 
-        this.ws.on('message', (TempData) => {
-            TempData = JSON.parse(TempData);
-            this.events.emit(`event_wsnet:${TempData[0]}:${TempData[1]}`, TempData);
+const cliget = function(socket) {
+  const eventsHandle = new events();
+
+  socket.on('message', function message(stateData) {
+    stateData = JSON.parse(stateData);
+
+    eventsHandle.emit(`cligetevent:${stateData.id}:${stateData.name}`, [stateData.status, stateData.source]);
+  });
+
+  let personal = 1;
+  return {
+    send: async function(params) {
+      params['id'] = personal += 1;
+
+
+      return new Promise(resolve => {
+        eventsHandle.on(`cligetevent:${personal}:${params.name}`, function event(resource) {
+          return resolve(resource);
         });
+
+        socket.send(JSON.stringify(params));
+      });
     }
-
-    send(TempData) {
-        return new Promise(resolve => {
-            this.events.on(`event_wsnet:${this.waiterID}:${TempData[0]}`, (data) => {
-
-                if(data[2] == -1) {
-                    throw(data[3]);
-                }
-
-                return resolve(data);
-            });
-
-            TempData.unshift(this.waiterID++);
-            this.ws.send(JSON.stringify(TempData));
-        });
-    }
+  };
 }
 
-module.exports = _cliget;
+module.exports = cliget;
