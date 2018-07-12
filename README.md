@@ -1,6 +1,6 @@
 
 
-# biot-wsocket
+# biot-wsclient
 ## Websocket client-plugin for [biot-wsocket](https://github.com/remmelgas/biot-wsocket) parse server data, supports async / await.
 
 </br></br>
